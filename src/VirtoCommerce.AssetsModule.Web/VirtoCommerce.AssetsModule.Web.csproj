@@ -20,6 +20,7 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.6.3" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
