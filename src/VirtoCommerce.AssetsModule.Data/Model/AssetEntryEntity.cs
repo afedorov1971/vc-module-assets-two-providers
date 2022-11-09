@@ -8,7 +8,7 @@ namespace VirtoCommerce.AssetsModule.Data.Model
 {
     public class AssetEntryEntity : AuditableEntity, IDataEntity<AssetEntryEntity, AssetEntry>
     {
-        [StringLength(2083)]
+        //[StringLength(2083)]
         [Required]
         public string RelativeUrl { get; set; }
 
@@ -21,7 +21,7 @@ namespace VirtoCommerce.AssetsModule.Data.Model
         /// <summary>
         /// File name
         /// </summary>
-        [StringLength(1024)]
+        //[StringLength(1024)]
         [Required]
         public string Name { get; set; }
 

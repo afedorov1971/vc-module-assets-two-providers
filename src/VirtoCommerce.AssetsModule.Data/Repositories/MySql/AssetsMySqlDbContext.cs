@@ -2,16 +2,16 @@ using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.AssetsModule.Data.Model;
 
-namespace VirtoCommerce.AssetsModule.Data.Repositories
+namespace VirtoCommerce.AssetsModule.Data.Repositories.MySql
 {
-    public class AssetsDbContext : DbContextWithTriggers
+    public class AssetsMySqlDbContext : DbContextWithTriggers
     {
-        public AssetsDbContext(DbContextOptions<AssetsDbContext> options)
+        public AssetsMySqlDbContext(DbContextOptions<AssetsMySqlDbContext> options)
             : base(options)
         {
         }
 
-        protected AssetsDbContext(DbContextOptions options)
+        protected AssetsMySqlDbContext(DbContextOptions options)
             : base(options)
         {
         }
@@ -22,8 +22,8 @@ namespace VirtoCommerce.AssetsModule.Data.Repositories
             modelBuilder.Entity<AssetEntryEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<AssetEntryEntity>().Property(x => x.CreatedBy).HasMaxLength(64);
             modelBuilder.Entity<AssetEntryEntity>().Property(x => x.ModifiedBy).HasMaxLength(64);
-            modelBuilder.Entity<AssetEntryEntity>().Property(x => x.RelativeUrl).HasMaxLength(2083);
-            modelBuilder.Entity<AssetEntryEntity>().Property(x => x.Name).HasMaxLength(1024);
+            modelBuilder.Entity<AssetEntryEntity>().Property(x => x.RelativeUrl).HasMaxLength(512);
+            modelBuilder.Entity<AssetEntryEntity>().Property(x => x.Name).HasMaxLength(256);
 
             modelBuilder.Entity<AssetEntryEntity>().HasIndex(x => new { x.RelativeUrl, x.Name })
                 .IsUnique(false)

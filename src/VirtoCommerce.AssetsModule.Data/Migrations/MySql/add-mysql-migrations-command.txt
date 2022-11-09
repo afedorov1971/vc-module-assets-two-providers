@@ -1,0 +1,1 @@
+Add-Migration Initial -Context VirtoCommerce.AssetsModule.Data.Repositories.MySql.AssetsMySqlDbContext  -Verbose -OutputDir Migrations/MySql -Project VirtoCommerce.AssetsModule.Data -StartupProject VirtoCommerce.AssetsModule.Data  -Debug
