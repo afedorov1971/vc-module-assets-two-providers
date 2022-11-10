@@ -7,7 +7,7 @@ namespace VirtoCommerce.AssetsModule.Web.Extensions
 		public static bool UseMySqlProviderForModule(this IConfiguration config, string moduleId)
 		{
 			// TODO: Read config settings related to the module
-			return true;
+			return false;
 		}
 
 		public static string GetModuleConnectionString(this IConfiguration configuration, string moduleId)

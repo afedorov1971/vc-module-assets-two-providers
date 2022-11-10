@@ -16,40 +16,39 @@ using VirtoCommerce.Platform.Data.Extensions;
 
 namespace VirtoCommerce.AssetsModule.Web
 {
-    public class Module : IModule
+    public class Module : IModule, IHasConfiguration
     {
         public ManifestModuleInfo ModuleInfo { get; set; }
 
+        public IConfiguration Configuration { get; set; }
+
         public void Initialize(IServiceCollection serviceCollection)
         {
+	        var useMySqlProvider = Configuration.UseMySqlProviderForModule(ModuleInfo.Id);
+	        var connectionString = Configuration.GetModuleConnectionString(ModuleInfo.Id);
+
             serviceCollection.AddSwaggerGen(c =>
             {
                 c.OperationFilter<FileUploadOperationFilter>();
             });
 
-            serviceCollection.AddDbContext<AssetsDbContext>((provider, options) =>
+            if (useMySqlProvider)
             {
-                var configuration = provider.GetRequiredService<IConfiguration>();
-                options.UseSqlServer(configuration.GetModuleConnectionString(ModuleInfo.Id));
-            });
-
-            serviceCollection.AddDbContext<AssetsMySqlDbContext>((provider, options) =>
-            {
-	            var configuration = provider.GetRequiredService<IConfiguration>();
-	            options.UseMySql(configuration.GetModuleConnectionString(ModuleInfo.Id), new MySqlServerVersion(new Version(5, 7)));
-            });
-
-
-            serviceCollection.AddTransient<IAssetsRepository>(provider =>
-            {
-	            var configuration = provider.GetRequiredService<IConfiguration>();
-	            if (configuration.UseMySqlProviderForModule(ModuleInfo.Id))
+	            serviceCollection.AddDbContext<AssetsMySqlDbContext>(options =>
 	            {
-		            return new AssetsMySqlRepository(provider.GetRequiredService<AssetsMySqlDbContext>());
-	            }
+		            options.UseMySql(connectionString, new MySqlServerVersion(new Version(5, 7)));
+	            });
+	            serviceCollection.AddTransient<IAssetsRepository, AssetsMySqlRepository>();
+            }
+            else
+            {
+	            serviceCollection.AddDbContext<AssetsDbContext>(options =>
+	            {
+		           options.UseSqlServer(connectionString);
+	            });
+	            serviceCollection.AddTransient<IAssetsRepository, AssetsRepository>();
+            }
 
-	            return new AssetsRepository(provider.GetRequiredService<AssetsDbContext>());
-            });
             serviceCollection.AddSingleton<Func<IAssetsRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IAssetsRepository>());
             serviceCollection.AddTransient<ICrudService<AssetEntry>, AssetEntryService>();
             serviceCollection.AddTransient<ISearchService<AssetEntrySearchCriteria, AssetEntrySearchResult, AssetEntry>, AssetEntrySearchService>();
@@ -62,7 +61,7 @@ namespace VirtoCommerce.AssetsModule.Web
 
 	        var serviceProvider = serviceScope.ServiceProvider;
 
-	        var useMySqlProvider = serviceProvider.GetRequiredService<IConfiguration>().UseMySqlProviderForModule(ModuleInfo.Id);
+	        var useMySqlProvider = Configuration.UseMySqlProviderForModule(ModuleInfo.Id);
             
             using DbContextWithTriggers dbContext = useMySqlProvider ? serviceProvider.GetRequiredService<AssetsMySqlDbContext>() :
 	                                                                   serviceProvider.GetRequiredService<AssetsDbContext>();
